@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<!--[if IE]>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<![endif]-->
+<meta charset="utf-8">
+<title>jQuery File Upload Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/jquery.fileupload.css">
+<script src="js/jquery.min.js"></script>
+<script src="js/vendor/jquery.ui.widget.js"></script><!-- jQuery UI小部件厂,可以省略如果jQuery UI已经包括 -->
+<script src="js/jquery.iframe-transport.js"></script><!-- Iframe运输是需要浏览器不支持XHR文件上传 -->
+<script src="js/jquery.fileupload.js"></script><!-- 文件上传处理插件 -->
+<script src="js/tmpl.min.js"></script><!-- 基本的文件上传插件 -->
+<script src="js/jquery.fileupload-process.js"></script><!--模板插件包含渲染上传/下载清单-->
+<script src="js/jquery.fileupload-ui.js"></script><!-- 文件上传的用户界面插件-->
+<script src="js/main.js"></script><!-- 主应用程序脚本 -->
+</head>
+<body>
+<div class="container">
+  <h1>jQuery File Upload Demo  </h1>
+    <!-- 文件上传表单作为目标文件上传小部件 -->
+    <form id="fileupload" action="/upload" method="POST" enctype="multipart/form-data">
+        <!-- 重定向浏览器禁用了JavaScript来源页面 -->
+        <noscript><input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/"></noscript>
+        <!-- 这个fileupload-buttonbar包含按钮来添加/删除文件和启动/取消上传 -->
+        <div class="row fileupload-buttonbar">
+            <div class="col-lg-7">
+                <!-- 用span的fileinput按钮风格文件输入字段作为按钮 -->
+                <span class="btn btn-primary fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>添加视频</span>
+                    <input type="file" name="files" multiple>
+                </span>
+                <!-- 全球文件处理状态 -->
+                <span class="fileupload-process"></span>
+            </div>
+            <!-- 全球进展状态 -->
+            <div class="col-lg-5 fileupload-progress fade">
+                <!-- 全球进度条 -->
+                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                </div>
+                <!-- 扩展的全球进展状态 -->
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <!-- 表清单文件可以上传/下载 -->
+        <table role="presentation" class="table table-striped">
+        	<tbody class="files"></tbody>
+        </table>
+    </form>
+    <br>
+</div>
+<!-- 模板来显示文件可以上传 -->
+<script id="template-upload" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+        <td>
+            <p class="name">{%=file.name%}</p>
+            <strong class="error text-danger"></strong>
+        </td>
+        <td>
+            <p class="size">Processing...</p>
+        </td>
+		<td width="20%">
+			<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+				<div class="progress-bar progress-bar-success" style="width:0%;"></div>
+			</div>
+		</td>
+        <td>
+            {% if (!i && !o.options.autoUpload) { %}
+                <button class="btn btn-primary start" disabled>
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>开始上传</span>
+                </button>
+            {% } %}
+            {% if (!i) { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>取消</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+</script>
+<!-- 模板来显示文件可供下载 -->
+<script id="template-download" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-download fade">
+        <td>
+            <span class="preview">
+                {% if (file.thumbnailUrl) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                {% } %}
+            </span>
+        </td>
+        <td>
+            <p class="name">
+                {% if (file.url) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                {% } else { %}
+                    <span>{%=file.name%}</span>
+                {% } %}
+            </p>
+            {% if (file.error) { %}
+                <div><span class="label label-danger">错误</span> {%=file.error%}</div>
+            {% } %}
+        </td>
+        <td>
+            <span class="size">{%=o.formatFileSize(file.size)%}</span>
+        </td>
+        <td>
+            {% if (file.deleteUrl) { %}
+                <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                    <i class="glyphicon glyphicon-trash"></i>
+                    <span>删除</span>
+                </button>
+            {% } else { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>取消</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+</script>
+
+</body> 
+</html>
