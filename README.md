@@ -1,4 +1,6 @@
-record
+jqueryfileupload-resumeupload-demo
 ======
 
-Record some personal trying about IT
+demos of file uploads by making use of jquery-file-upload.
+(1) simpleindex.html  -- a simple common upload demo.
+(2) chunkedupload.html -- a resuming file upload demo.
